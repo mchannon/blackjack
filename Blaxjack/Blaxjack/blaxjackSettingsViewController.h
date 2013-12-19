@@ -1,5 +1,5 @@
 //
-//  blaxjackSecondViewController.h
+//  blaxjackSettingsViewController.h
 //  Blaxjack
 //
 //  Created by clamps on 12/18/13.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface blaxjackSecondViewController : UIViewController
+@interface blaxjackSettingsViewController : UIViewController
 
 @end

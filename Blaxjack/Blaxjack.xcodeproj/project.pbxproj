@@ -15,13 +15,14 @@
 		B137A927186289F600A51624 /* blaxjackAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B137A926186289F600A51624 /* blaxjackAppDelegate.m */; };
 		B137A92A186289F600A51624 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B137A928186289F600A51624 /* Main.storyboard */; };
 		B137A92D186289F600A51624 /* blaxjackFirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B137A92C186289F600A51624 /* blaxjackFirstViewController.m */; };
-		B137A930186289F600A51624 /* blaxjackSecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B137A92F186289F600A51624 /* blaxjackSecondViewController.m */; };
+		B137A930186289F600A51624 /* blaxjackSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B137A92F186289F600A51624 /* blaxjackSettingsViewController.m */; };
 		B137A932186289F600A51624 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B137A931186289F600A51624 /* Images.xcassets */; };
 		B137A939186289F600A51624 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B137A938186289F600A51624 /* XCTest.framework */; };
 		B137A93A186289F600A51624 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B137A916186289F600A51624 /* Foundation.framework */; };
 		B137A93B186289F600A51624 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B137A91A186289F600A51624 /* UIKit.framework */; };
 		B137A943186289F600A51624 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B137A941186289F600A51624 /* InfoPlist.strings */; };
 		B137A945186289F600A51624 /* BlaxjackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B137A944186289F600A51624 /* BlaxjackTests.m */; };
+		B137A95018628C1D00A51624 /* blaxjackGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B137A94F18628C1D00A51624 /* blaxjackGameViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,14 +49,16 @@
 		B137A929186289F600A51624 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B137A92B186289F600A51624 /* blaxjackFirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = blaxjackFirstViewController.h; sourceTree = "<group>"; };
 		B137A92C186289F600A51624 /* blaxjackFirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = blaxjackFirstViewController.m; sourceTree = "<group>"; };
-		B137A92E186289F600A51624 /* blaxjackSecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = blaxjackSecondViewController.h; sourceTree = "<group>"; };
-		B137A92F186289F600A51624 /* blaxjackSecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = blaxjackSecondViewController.m; sourceTree = "<group>"; };
+		B137A92E186289F600A51624 /* blaxjackSettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = blaxjackSettingsViewController.h; sourceTree = "<group>"; };
+		B137A92F186289F600A51624 /* blaxjackSettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = blaxjackSettingsViewController.m; sourceTree = "<group>"; };
 		B137A931186289F600A51624 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		B137A937186289F600A51624 /* BlaxjackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlaxjackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B137A938186289F600A51624 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		B137A940186289F600A51624 /* BlaxjackTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BlaxjackTests-Info.plist"; sourceTree = "<group>"; };
 		B137A942186289F600A51624 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B137A944186289F600A51624 /* BlaxjackTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlaxjackTests.m; sourceTree = "<group>"; };
+		B137A94E18628C1D00A51624 /* blaxjackGameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blaxjackGameViewController.h; sourceTree = "<group>"; };
+		B137A94F18628C1D00A51624 /* blaxjackGameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = blaxjackGameViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,8 +123,10 @@
 				B137A928186289F600A51624 /* Main.storyboard */,
 				B137A92B186289F600A51624 /* blaxjackFirstViewController.h */,
 				B137A92C186289F600A51624 /* blaxjackFirstViewController.m */,
-				B137A92E186289F600A51624 /* blaxjackSecondViewController.h */,
-				B137A92F186289F600A51624 /* blaxjackSecondViewController.m */,
+				B137A92E186289F600A51624 /* blaxjackSettingsViewController.h */,
+				B137A92F186289F600A51624 /* blaxjackSettingsViewController.m */,
+				B137A94E18628C1D00A51624 /* blaxjackGameViewController.h */,
+				B137A94F18628C1D00A51624 /* blaxjackGameViewController.m */,
 				B137A931186289F600A51624 /* Images.xcassets */,
 				B137A91D186289F600A51624 /* Supporting Files */,
 			);
@@ -255,9 +260,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B137A930186289F600A51624 /* blaxjackSecondViewController.m in Sources */,
+				B137A930186289F600A51624 /* blaxjackSettingsViewController.m in Sources */,
 				B137A927186289F600A51624 /* blaxjackAppDelegate.m in Sources */,
 				B137A923186289F600A51624 /* main.m in Sources */,
+				B137A95018628C1D00A51624 /* blaxjackGameViewController.m in Sources */,
 				B137A92D186289F600A51624 /* blaxjackFirstViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -467,6 +473,7 @@
 				B137A94A186289F600A51624 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B137A94B186289F600A51624 /* Build configuration list for PBXNativeTarget "BlaxjackTests" */ = {
 			isa = XCConfigurationList;
@@ -475,6 +482,7 @@
 				B137A94D186289F600A51624 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
