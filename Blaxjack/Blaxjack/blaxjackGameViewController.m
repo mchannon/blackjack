@@ -48,59 +48,74 @@ short player1handsuits[ 10 ][ 4 ];
 	// Do any additional setup after loading the view.
 }
 
-- (void)drawDealerPlayfield:(short)total
+- (void)drawDealerPlayfield:(short)total reveal:(BOOL)reveal
 {
-    UIImage *img = [self CardImage:3 suit: 5];
-    
-    UIImage *img2 = [self CardImage:dealerhand[1] suit:dealerhandsuits[1]];
-
     UIGraphicsBeginImageContextWithOptions(_dealerPlayfield.frame.size, FALSE, 0.0);
-    [img drawInRect:CGRectMake( 0, 0, img.size.width, img.size.height)];
-    [img2 drawInRect:CGRectMake( 23, 0, img2.size.width, img2.size.height)];
+    
+    short i = 0;
+    UIImage *img;
+    
+    while (dealerhand[i] != 0)
+    {
+        if ( reveal == FALSE && i == 0 )
+            img = [self CardImage:3 suit:5];
+        else
+            img = [self CardImage:dealerhand[i] suit:dealerhandsuits[i]];
+        [img drawInRect:CGRectMake( 23 * i, 0, img.size.width, img.size.height)];
+        i++;
+    }
+    
+    UIFont *font = [UIFont fontWithName: @"Courier" size: 12.0f];
+    NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys: font, NSFontAttributeName, nil];
+    
+    NSString *totalString = [NSString stringWithFormat:@"%d", [ self AddDealerCards] ];
+    
+    [totalString drawInRect: CGRectMake( img.size.width + 23 * i, 30, 30, 20)
+             withAttributes: dictionary];
+    
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-
+    
     [ _dealerPlayfield setImage:newImage ];
     
     [ _dealerPlayfield reloadInputViews];
-    
 }
 
-- (void)drawPlayer1Playfield:(short)total
+- (void)drawPlayer1Playfield:(short)total split:(short)split
 {
-    UIImage *img = [self CardImage:player1hand[0][0] suit:player1handsuits[0][0]];
-    UIImage *img2 = [self CardImage:player1hand[1][0] suit:player1handsuits[1][0]];
-    
     UIGraphicsBeginImageContextWithOptions(_playerPlayfield.frame.size, FALSE, 0.0);
-    [img drawInRect:CGRectMake( 0, 0, img.size.width, img.size.height)];
-    [img2 drawInRect:CGRectMake( 23, 0, img2.size.width, img2.size.height)];
+
+    short i = 0;
+    UIImage *img;
+    
+    while (player1hand[i][split] != 0)
+    {
+        img = [self CardImage:player1hand[i][split] suit:player1handsuits[i][split]];
+        [img drawInRect:CGRectMake( 23 * i, 0, img.size.width, img.size.height)];
+        i++;
+    }
+    
+    UIFont *font = [UIFont fontWithName: @"Courier" size: 12.0f];
+    NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys: font, NSFontAttributeName, nil];
+    
+    NSString *totalString = [NSString stringWithFormat:@"%d", [ self AddPlayerCards:0] ];
+    
+    [totalString drawInRect: CGRectMake( img.size.width + 23 * i, 30, 30, 20)
+       withAttributes: dictionary];
+
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
     [ _playerPlayfield setImage:newImage ];
     
     [ _playerPlayfield reloadInputViews];
-    
 }
-
-
 
 - (IBAction)HitButton:(id)sender {
 }
 - (IBAction)StandButton:(id)sender {
 }
 - (IBAction)DoubleButton:(id)sender {
-    
-    CGPoint m = [self DealCard];
-    UIImage *img = [self CardImage:m.x suit: m.y];
-    
-    [ _dealerPlayfield setFrame:CGRectMake( _dealerPlayfield.frame.origin.x, _dealerPlayfield.frame.origin.y,
-                                           img.size.width, img.size.height)];
-    
-    [ _dealerPlayfield setImage:img ];
-    
-    [ _dealerPlayfield reloadInputViews];
-    
 }
 - (IBAction)SplitButton:(id)sender {
 }
@@ -135,8 +150,8 @@ short player1handsuits[ 10 ][ 4 ];
     short playerTotal = [ self AddPlayerCards:0];
     short dealerTotal = [ self AddDealerCards];
     
-    [self drawDealerPlayfield: dealerTotal ];
-    [self drawPlayer1Playfield: playerTotal ];
+    [self drawDealerPlayfield: dealerTotal reveal:FALSE ];
+    [self drawPlayer1Playfield: playerTotal split:0 ];
 }
 
 - (short)AddPlayerCards:(short)split
