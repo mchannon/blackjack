@@ -1,18 +1,18 @@
 //
-//  blaxjackSecondViewController.m
+//  blaxjackSettingsViewController.m
 //  Blaxjack
 //
 //  Created by clamps on 12/18/13.
 //  Copyright (c) 2013 loitery. All rights reserved.
 //
 
-#import "blaxjackSecondViewController.h"
+#import "blaxjackSettingsViewController.h"
 
-@interface blaxjackSecondViewController ()
+@interface blaxjackSettingsViewController ()
 
 @end
 
-@implementation blaxjackSecondViewController
+@implementation blaxjackSettingsViewController
 
 - (void)viewDidLoad
 {
