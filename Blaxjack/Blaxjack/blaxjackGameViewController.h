@@ -14,4 +14,5 @@
 
 @end
 
-#define kNumberOfDecks      8
+#define kNumberOfDecks          8
+#define kPenetrationPercentage  0.7
