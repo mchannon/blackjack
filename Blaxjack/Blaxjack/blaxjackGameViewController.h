@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface blaxjackGameViewController : UIViewController
+@interface blaxjackGameViewController : UIViewController <UIAlertViewDelegate>
 
 - (UIImage *)CardImage:( short )value suit: (short) suit;
 

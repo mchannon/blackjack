@@ -17,6 +17,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *doubleButton;
 @property (weak, nonatomic) IBOutlet UIButton *splitButton;
 @property (weak, nonatomic) IBOutlet UIButton *surrenderButton;
+@property (weak, nonatomic) IBOutlet UILabel *splitLabel;
 
 @end
 
@@ -25,7 +26,8 @@
 short deck[ 52 * kNumberOfDecks ];
 short decksuits[ 52 * kNumberOfDecks ];
 short deckposition = 0;
-short holecard;
+short activesplit = 0;
+short numberofsplits = 0;
 short dealerhand[ 10 ];
 short dealerhandsuits[ 10 ];
 short player1hand[ 10 ][ 4 ];
@@ -112,17 +114,61 @@ short player1handsuits[ 10 ][ 4 ];
 }
 
 - (IBAction)HitButton:(id)sender {
+    short i = 0;
+    
+    while ( player1hand[ i ][ activesplit ] != 0 )
+        i++;
+    
+    CGPoint m = [self DealCard];
+    player1hand[ i ][ activesplit ] = m.x;
+    player1handsuits[ i ][ activesplit ] = m.y;
+    
+    [self drawPlayer1Playfield: [ self AddPlayerCards:activesplit] split:activesplit ];
+    
+    _doubleButton.hidden = true;
+    _surrenderButton.hidden = true;
+    _splitButton.hidden = true;
+    
+    if ( [ self AddPlayerCards:activesplit] >= 21 )
+    {
+        //dealer reveal
+        
+        if ( activesplit < numberofsplits )
+            ;
+    }
 }
 - (IBAction)StandButton:(id)sender {
+    [self dealersTurn];
 }
 - (IBAction)DoubleButton:(id)sender {
+    
+    CGPoint m = [self DealCard];
+    player1hand[ 2 ][ activesplit ] = m.x;
+    player1handsuits[ 2 ][ activesplit ] = m.y;
+    [self drawPlayer1Playfield: [ self AddPlayerCards:activesplit] split:activesplit ];
+    [self dealersTurn];
 }
 - (IBAction)SplitButton:(id)sender {
+    
+    numberofsplits++;
+    player1hand[ 0 ][ numberofsplits ] = player1hand[ 1 ][ activesplit ];
+    player1handsuits[ 0 ][ numberofsplits ] = player1handsuits[ 1 ][ activesplit ];
+    
+    CGPoint m = [self DealCard];
+    player1hand[ 1 ][ activesplit ] = m.x;
+    player1handsuits[ 1 ][ activesplit ] = m.y;
+    
+    [self drawPlayer1Playfield: [ self AddPlayerCards:activesplit] split:activesplit ];
+
+
 }
 - (IBAction)SurrenderButton:(id)sender {
 }
 - (IBAction)DealButton:(id)sender {
-    _dealButton.hidden = true;
+//    _dealButton.hidden = true;
+    
+    activesplit = 0;
+    numberofsplits = 0;
     
     for ( short i = 0; i < 10; i++ )
         dealerhand[ i ] = 0;
@@ -132,7 +178,10 @@ short player1handsuits[ 10 ][ 4 ];
             player1hand[ j ][ k ] = 0;
 
     if ( ( (float)deckposition / ( 52.0 * kNumberOfDecks ) ) > kPenetrationPercentage )
+    {
         [self Shuffle];
+        deckposition = 0;
+    }
     
     CGPoint m = [self DealCard];
     player1hand[ 0 ][ 0 ] = m.x;
@@ -152,6 +201,118 @@ short player1handsuits[ 10 ][ 4 ];
     
     [self drawDealerPlayfield: dealerTotal reveal:FALSE ];
     [self drawPlayer1Playfield: playerTotal split:0 ];
+
+    if ( dealerTotal == 21 && dealerhand[ 0 ] == 1 )
+        [self drawDealerPlayfield: dealerTotal reveal:TRUE ];
+    else
+    {
+        if ( dealerhand[ 1 ] == 1 )
+            [self seekInsurance ];
+
+        if ( playerTotal == 21 )
+            [self playerBlackjack ];
+        else
+        {
+            _doubleButton.hidden = false;
+            _hitButton.hidden = false;
+            _standButton.hidden = false;
+            _surrenderButton.hidden = false;
+        }
+        
+        if ( player1hand[ 0 ][ 0 ] == player1hand[ 1 ][ 0 ] )
+            _splitButton.hidden = false;
+        else
+            _splitButton.hidden = true;
+
+    }
+}
+
+- (void)dealersTurn
+{
+    short softSum = 0, hardSum = 0;
+    short card;
+    CGPoint m;
+    short i = 0;
+    BOOL isHard17 = false;
+
+    while ([ self AddDealerCards] < 18 && isHard17 == false )
+    {
+        i = 0;
+        while ( dealerhand[ i ] != 0 )
+            i++;
+        
+        if ( [ self AddDealerCards] == 17 )
+        {
+            for ( short i = 0; i < 10; i++ )
+            {
+                card = dealerhand[ i ];
+                
+                switch ( card )
+                {
+                    case 11:
+                    case 12:
+                    case 13:
+                        card = 10;
+                        break;
+                }
+                
+                hardSum += card;
+                if ( card == 1 )
+                    softSum += 11;
+                else
+                    softSum += card;
+            }
+            
+            if ( hardSum == 7 )
+            {
+                m = [self DealCard];
+                dealerhand[ i ] = m.x;
+                dealerhandsuits[ i ] = m.y;
+            }
+            else
+                isHard17 = true;
+        }
+        else
+        {
+            m = [self DealCard];
+            dealerhand[ i ] = m.x;
+            dealerhandsuits[ i ] = m.y;
+        }
+    }
+    
+    [self drawDealerPlayfield: [ self AddDealerCards] reveal:TRUE ];
+}
+
+- (void)seekInsurance
+{
+    UIAlertView *alert = [[UIAlertView alloc]
+                          initWithTitle: @"Insurance"
+                          message: @"Do you want insurance?"
+                          delegate: self
+                          cancelButtonTitle:@"No"
+                          otherButtonTitles:@"Yes",nil];
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1)
+    {
+        NSLog(@"bought insurance");
+    }
+    else
+    {
+        NSLog(@"no insurance");
+    }
+}
+
+- (void)playerBlackjack
+{
+    _doubleButton.hidden = true;
+    _hitButton.hidden = true;
+    _standButton.hidden = true;
+    _surrenderButton.hidden = true;
+    _splitButton.hidden = true;
 }
 
 - (short)AddPlayerCards:(short)split
@@ -209,6 +370,9 @@ short player1handsuits[ 10 ][ 4 ];
         else
             softSum += card;
     }
+    
+    while ( ( softSum - hardSum ) > 10 )
+        softSum -= 10;
     
     if ( softSum <= 21 )
         return softSum;

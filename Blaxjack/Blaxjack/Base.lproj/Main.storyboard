@@ -149,6 +149,13 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="1:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1dJ-Sz-c8P">
+                                <rect key="frame" x="5" y="309" width="15" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Dealer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9sN-GH-J1s">
                                 <rect key="frame" x="40" y="74" width="50" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -179,6 +186,7 @@
                         <outlet property="hitButton" destination="gms-P9-okS" id="zm7-wH-6Zw"/>
                         <outlet property="playerPlayfield" destination="P7v-ba-ULO" id="HGD-dz-ftW"/>
                         <outlet property="splitButton" destination="jH0-Gu-g8F" id="gZD-9x-v29"/>
+                        <outlet property="splitLabel" destination="1dJ-Sz-c8P" id="9yw-t5-STp"/>
                         <outlet property="standButton" destination="lIk-h8-xJf" id="04F-wx-4xf"/>
                         <outlet property="surrenderButton" destination="vEK-7g-d5h" id="iWV-PR-hL9"/>
                     </connections>
