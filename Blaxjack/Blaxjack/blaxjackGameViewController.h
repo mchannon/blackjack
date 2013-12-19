@@ -10,4 +10,8 @@
 
 @interface blaxjackGameViewController : UIViewController
 
+- (UIImage *)CardImage:( short )value suit: (short) suit;
+
 @end
+
+#define kNumberOfDecks      8
