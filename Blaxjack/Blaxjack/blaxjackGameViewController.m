@@ -131,14 +131,23 @@ short player1handsuits[ 10 ][ 4 ];
     
     if ( [ self AddPlayerCards:activesplit] >= 21 )
     {
-        //dealer reveal
-        
-        if ( activesplit < numberofsplits )
-            ;
+        if ( activesplit == numberofsplits )
+            [self dealersTurn];
+        else
+        {
+            activesplit++;
+            [self drawPlayer1Playfield:[ self AddPlayerCards:activesplit] split:activesplit];
+        }
     }
 }
 - (IBAction)StandButton:(id)sender {
-    [self dealersTurn];
+    if ( activesplit < numberofsplits )
+    {
+        activesplit++;
+        [ _splitLabel setText:[NSString stringWithFormat:@"%d:", activesplit+1] ];
+    }
+    else
+        [self dealersTurn];
 }
 - (IBAction)DoubleButton:(id)sender {
     
@@ -160,12 +169,20 @@ short player1handsuits[ 10 ][ 4 ];
     
     [self drawPlayer1Playfield: [ self AddPlayerCards:activesplit] split:activesplit ];
 
-
+    [ _splitLabel setText:[NSString stringWithFormat:@"%d:", activesplit+1] ];
+    _splitLabel.hidden = false;
 }
 - (IBAction)SurrenderButton:(id)sender {
+    [ self dealersTurn];
 }
 - (IBAction)DealButton:(id)sender {
-//    _dealButton.hidden = true;
+    _splitLabel.hidden = true;
+    _dealButton.hidden = true;
+    _hitButton.hidden = true;
+    _standButton.hidden = true;
+    _splitButton.hidden = true;
+    _doubleButton.hidden = true;
+    _surrenderButton.hidden = true;
     
     activesplit = 0;
     numberofsplits = 0;
@@ -203,14 +220,20 @@ short player1handsuits[ 10 ][ 4 ];
     [self drawPlayer1Playfield: playerTotal split:0 ];
 
     if ( dealerTotal == 21 && dealerhand[ 0 ] == 1 )
+    {
         [self drawDealerPlayfield: dealerTotal reveal:TRUE ];
+        _dealButton.hidden = false;
+    }
     else
     {
         if ( dealerhand[ 1 ] == 1 )
             [self seekInsurance ];
 
         if ( playerTotal == 21 )
-            [self playerBlackjack ];
+        {
+            _dealButton.hidden = false;
+           [self playerBlackjack ];
+        }
         else
         {
             _doubleButton.hidden = false;
@@ -281,6 +304,13 @@ short player1handsuits[ 10 ][ 4 ];
     }
     
     [self drawDealerPlayfield: [ self AddDealerCards] reveal:TRUE ];
+    
+    _dealButton.hidden = false;
+    _hitButton.hidden = true;
+    _standButton.hidden = true;
+    _splitButton.hidden = true;
+    _doubleButton.hidden = true;
+    _surrenderButton.hidden = true;
 }
 
 - (void)seekInsurance
@@ -304,6 +334,9 @@ short player1handsuits[ 10 ][ 4 ];
     {
         NSLog(@"no insurance");
     }
+    
+    if ( [ self AddDealerCards ] == 21 )
+        [self dealersTurn];
 }
 
 - (void)playerBlackjack
