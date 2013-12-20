@@ -32,6 +32,9 @@ short dealerhand[ 10 ];
 short dealerhandsuits[ 10 ];
 short player1hand[ 10 ][ 4 ];
 short player1handsuits[ 10 ][ 4 ];
+BOOL doubledown[ 4 ];
+short player1balance = 100;
+short player1bet = 5;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -104,6 +107,14 @@ short player1handsuits[ 10 ][ 4 ];
     
     [totalString drawInRect: CGRectMake( img.size.width + 23 * i, 30, 30, 20)
        withAttributes: dictionary];
+    
+    totalString = [NSString stringWithFormat:@"$%d", player1balance];
+    font = [UIFont fontWithName: @"Marker Felt" size: 14.0f];
+    dictionary = [[NSDictionary alloc] initWithObjectsAndKeys: font, NSFontAttributeName, nil];
+
+    [totalString drawInRect: CGRectMake( img.size.width + 18 * i, 70, 80, 20)
+             withAttributes: dictionary];
+
 
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
@@ -156,6 +167,7 @@ short player1handsuits[ 10 ][ 4 ];
 - (IBAction)DoubleButton:(id)sender {
     
     CGPoint m = [self DealCard];
+    doubledown[ activesplit ] = true;
     player1hand[ 2 ][ activesplit ] = m.x;
     player1handsuits[ 2 ][ activesplit ] = m.y;
     [self drawPlayer1Playfield: [ self AddPlayerCards:activesplit] split:activesplit ];
@@ -204,8 +216,11 @@ short player1handsuits[ 10 ][ 4 ];
     
     for ( short j = 0; j < 10; j++ )
         for ( short k = 0; k < 4; k++ )
+        {
             player1hand[ j ][ k ] = 0;
-
+            doubledown[ k ] = false;
+        }
+    
     if ( ( (float)deckposition / ( 52.0 * kNumberOfDecks ) ) > kPenetrationPercentage )
     {
         [self Shuffle];
@@ -323,6 +338,18 @@ short player1handsuits[ 10 ][ 4 ];
     _splitButton.hidden = true;
     _doubleButton.hidden = true;
     _surrenderButton.hidden = true;
+    
+    if ( [ self AddPlayerCards:0 ] > 21)
+        player1balance -= doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+    else
+        if ( [ self AddDealerCards ] > 21)
+            player1balance += doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+        else
+            if ( [ self AddDealerCards ] > [ self AddPlayerCards:0 ])
+                player1balance -= doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+            else
+                if ( [ self AddDealerCards ] < [ self AddPlayerCards:0 ])
+                    player1balance += doubledown[ 0 ] ? (2 * player1bet) : player1bet;
 }
 
 - (void)seekInsurance
@@ -486,4 +513,6 @@ short player1handsuits[ 10 ][ 4 ];
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)betButton:(id)sender {
+}
 @end
