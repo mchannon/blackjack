@@ -131,20 +131,24 @@ short player1handsuits[ 10 ][ 4 ];
     
     if ( [ self AddPlayerCards:activesplit] >= 21 )
     {
-        if ( activesplit == numberofsplits )
-            [self dealersTurn];
-        else
+        if ( activesplit < numberofsplits )
         {
             activesplit++;
-            [self drawPlayer1Playfield:[ self AddPlayerCards:activesplit] split:activesplit];
+            short sum = [ self AddPlayerCards:activesplit];
+            [ _splitLabel setText:[NSString stringWithFormat:@"%d:", activesplit+1] ];
+            [self drawPlayer1Playfield: sum split:activesplit ];
         }
+        else
+            [self dealersTurn];
     }
 }
 - (IBAction)StandButton:(id)sender {
     if ( activesplit < numberofsplits )
     {
         activesplit++;
+        short sum = [ self AddPlayerCards:activesplit];
         [ _splitLabel setText:[NSString stringWithFormat:@"%d:", activesplit+1] ];
+        [self drawPlayer1Playfield: sum split:activesplit ];
     }
     else
         [self dealersTurn];
@@ -155,7 +159,15 @@ short player1handsuits[ 10 ][ 4 ];
     player1hand[ 2 ][ activesplit ] = m.x;
     player1handsuits[ 2 ][ activesplit ] = m.y;
     [self drawPlayer1Playfield: [ self AddPlayerCards:activesplit] split:activesplit ];
-    [self dealersTurn];
+    if ( activesplit < numberofsplits )
+    {
+        activesplit++;
+        short sum = [ self AddPlayerCards:activesplit];
+        [ _splitLabel setText:[NSString stringWithFormat:@"%d:", activesplit+1] ];
+        [self drawPlayer1Playfield: sum split:activesplit ];
+    }
+    else
+        [self dealersTurn];
 }
 - (IBAction)SplitButton:(id)sender {
     
@@ -373,6 +385,9 @@ short player1handsuits[ 10 ][ 4 ];
             softSum += card;
     }
     
+    while ( ( softSum - hardSum ) > 10 )
+        softSum -= 10;
+
     if ( softSum <= 21 )
         return softSum;
     else
