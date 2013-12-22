@@ -23,8 +23,8 @@
 
 @implementation blaxjackGameViewController
 
-short deck[ 52 * kNumberOfDecks ];
-short decksuits[ 52 * kNumberOfDecks ];
+short deck[ 52 * 8 ];  // Leave room for 8 decks, even if not all are used
+short decksuits[ 52 * 8 ];
 short deckposition = 0;
 short activesplit = 0;
 short numberofsplits = 0;
@@ -34,7 +34,8 @@ short player1hand[ 10 ][ 4 ];
 short player1handsuits[ 10 ][ 4 ];
 BOOL doubledown[ 4 ];
 short player1balance = 100;
-short player1bet = 5;
+short player1bet = 10;
+BOOL dealerHitsSoft17 = false;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -70,14 +71,15 @@ short player1bet = 5;
         i++;
     }
     
-    UIFont *font = [UIFont fontWithName: @"Courier" size: 12.0f];
-    NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys: font, NSFontAttributeName, nil];
-    
-    NSString *totalString = [NSString stringWithFormat:@"%d", [ self AddDealerCards] ];
-    
-    [totalString drawInRect: CGRectMake( img.size.width + 23 * i, 30, 30, 20)
-             withAttributes: dictionary];
-    
+    if ( reveal )
+    {
+        UIFont *font = [UIFont fontWithName: @"Courier" size: 12.0f];
+        NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys: font, NSFontAttributeName, nil];
+        
+        NSString *totalString = [NSString stringWithFormat:@"%d", [ self AddDealerCards] ];
+        
+        [totalString drawInRect: CGRectMake( img.size.width + 23 * i, 30, 30, 20) withAttributes: dictionary];
+    }
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
@@ -103,7 +105,7 @@ short player1bet = 5;
     UIFont *font = [UIFont fontWithName: @"Courier" size: 12.0f];
     NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys: font, NSFontAttributeName, nil];
     
-    NSString *totalString = [NSString stringWithFormat:@"%d", [ self AddPlayerCards:0] ];
+    NSString *totalString = [NSString stringWithFormat:@"%d", [ self AddPlayerCards:activesplit] ];
     
     [totalString drawInRect: CGRectMake( img.size.width + 23 * i, 30, 30, 20)
        withAttributes: dictionary];
@@ -147,10 +149,26 @@ short player1bet = 5;
             activesplit++;
             short sum = [ self AddPlayerCards:activesplit];
             [ _splitLabel setText:[NSString stringWithFormat:@"%d:", activesplit+1] ];
+
+            short i = 0;
+            
+            while ( player1hand[ i ][ activesplit ] != 0 )
+                i++;
+            
+            CGPoint m = [self DealCard];
+            player1hand[ i ][ activesplit ] = m.x;
+            player1handsuits[ i ][ activesplit ] = m.y;
+            
+            _doubleButton.hidden = false;
+            if (player1hand[ 0 ][activesplit] == player1hand[ 1 ][activesplit])
+                _splitButton.hidden = false;
+            else
+                _splitButton.hidden = true;
+
             [self drawPlayer1Playfield: sum split:activesplit ];
         }
         else
-            [self dealersTurn];
+            [self dealersTurn: false];
     }
 }
 - (IBAction)StandButton:(id)sender {
@@ -159,10 +177,26 @@ short player1bet = 5;
         activesplit++;
         short sum = [ self AddPlayerCards:activesplit];
         [ _splitLabel setText:[NSString stringWithFormat:@"%d:", activesplit+1] ];
+        
+        short i = 0;
+        
+        while ( player1hand[ i ][ activesplit ] != 0 )
+            i++;
+        
+        CGPoint m = [self DealCard];
+        player1hand[ i ][ activesplit ] = m.x;
+        player1handsuits[ i ][ activesplit ] = m.y;
+        
+        _doubleButton.hidden = false;
+        if (player1hand[ 0 ][activesplit] == player1hand[ 1 ][activesplit])
+            _splitButton.hidden = false;
+        else
+            _splitButton.hidden = true;
+
         [self drawPlayer1Playfield: sum split:activesplit ];
     }
     else
-        [self dealersTurn];
+        [self dealersTurn: false];
 }
 - (IBAction)DoubleButton:(id)sender {
     
@@ -176,10 +210,26 @@ short player1bet = 5;
         activesplit++;
         short sum = [ self AddPlayerCards:activesplit];
         [ _splitLabel setText:[NSString stringWithFormat:@"%d:", activesplit+1] ];
+
+        short i = 0;
+        
+        while ( player1hand[ i ][ activesplit ] != 0 )
+            i++;
+        
+        CGPoint m = [self DealCard];
+        player1hand[ i ][ activesplit ] = m.x;
+        player1handsuits[ i ][ activesplit ] = m.y;
+
+        _doubleButton.hidden = false;
+        if (player1hand[ 0 ][activesplit] == player1hand[ 1 ][activesplit])
+            _splitButton.hidden = false;
+        else
+            _splitButton.hidden = true;
+
         [self drawPlayer1Playfield: sum split:activesplit ];
     }
     else
-        [self dealersTurn];
+        [self dealersTurn: false];
 }
 - (IBAction)SplitButton:(id)sender {
     
@@ -197,7 +247,8 @@ short player1bet = 5;
     _splitLabel.hidden = false;
 }
 - (IBAction)SurrenderButton:(id)sender {
-    [ self dealersTurn];
+    player1balance -= (0.5f * player1bet);
+    [ self dealersTurn: true];
 }
 - (IBAction)DealButton:(id)sender {
     _splitLabel.hidden = true;
@@ -221,7 +272,10 @@ short player1bet = 5;
             doubledown[ k ] = false;
         }
     
-    if ( ( (float)deckposition / ( 52.0 * kNumberOfDecks ) ) > kPenetrationPercentage )
+    NSUserDefaults *data = [NSUserDefaults standardUserDefaults];
+    short numberOfDecks = [[data objectForKey:@"numDecks"] boolValue];
+    
+    if ( ( (float)deckposition / ( 52.0 * numberOfDecks ) ) > kPenetrationPercentage )
     {
         [self Shuffle];
         deckposition = 0;
@@ -248,6 +302,7 @@ short player1bet = 5;
 
     if ( dealerTotal == 21 && dealerhand[ 0 ] == 1 )
     {
+        player1balance -= (1.0f * player1bet);
         [self drawDealerPlayfield: dealerTotal reveal:TRUE ];
         _dealButton.hidden = false;
     }
@@ -277,14 +332,17 @@ short player1bet = 5;
     }
 }
 
-- (void)dealersTurn
+- (void)dealersTurn: (BOOL)surrender
 {
     short softSum = 0, hardSum = 0;
     short card;
     CGPoint m;
     short i = 0;
     BOOL isHard17 = false;
-
+    
+    NSUserDefaults *data = [NSUserDefaults standardUserDefaults];
+    dealerHitsSoft17 = [[data objectForKey:@"hitSoft17"] boolValue];
+    
     while ([ self AddDealerCards] < 18 && isHard17 == false )
     {
         i = 0;
@@ -313,7 +371,7 @@ short player1bet = 5;
                     softSum += card;
             }
             
-            if ( hardSum == 7 )
+            if ( hardSum == 7 && dealerHitsSoft17 )
             {
                 m = [self DealCard];
                 dealerhand[ i ] = m.x;
@@ -339,17 +397,20 @@ short player1bet = 5;
     _doubleButton.hidden = true;
     _surrenderButton.hidden = true;
     
-    if ( [ self AddPlayerCards:0 ] > 21)
-        player1balance -= doubledown[ 0 ] ? (2 * player1bet) : player1bet;
-    else
-        if ( [ self AddDealerCards ] > 21)
-            player1balance += doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+    if ( surrender != true )
+    {
+        if ( [ self AddPlayerCards:0 ] > 21)
+            player1balance -= doubledown[ 0 ] ? (2 * player1bet) : player1bet;
         else
-            if ( [ self AddDealerCards ] > [ self AddPlayerCards:0 ])
-                player1balance -= doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+            if ( [ self AddDealerCards ] > 21)
+                player1balance += doubledown[ 0 ] ? (2 * player1bet) : player1bet;
             else
-                if ( [ self AddDealerCards ] < [ self AddPlayerCards:0 ])
-                    player1balance += doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+                if ( [ self AddDealerCards ] > [ self AddPlayerCards:0 ])
+                    player1balance -= doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+                else
+                    if ( [ self AddDealerCards ] < [ self AddPlayerCards:0 ])
+                        player1balance += doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+    }
 }
 
 - (void)seekInsurance
@@ -366,20 +427,28 @@ short player1bet = 5;
 - (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 1)
-    {
-        NSLog(@"bought insurance");
-    }
+        if ( [ self AddDealerCards ] == 21 )
+        {
+            player1balance += (1.0f * player1bet); //Takes it back off so this cancels it out
+            [self dealersTurn:false];
+        }
+        else
+        {
+            player1balance -= (0.5f * player1bet);
+            [self drawPlayer1Playfield:[self AddPlayerCards:activesplit] split:activesplit];
+        }
     else
-    {
-        NSLog(@"no insurance");
-    }
-    
-    if ( [ self AddDealerCards ] == 21 )
-        [self dealersTurn];
+        if ( [ self AddDealerCards ] == 21 )
+        {
+            player1balance -= player1bet;
+            [self dealersTurn:false];
+        }
 }
 
 - (void)playerBlackjack
 {
+    player1balance += (1.5f * player1bet);
+    
     _doubleButton.hidden = true;
     _hitButton.hidden = true;
     _standButton.hidden = true;
@@ -469,7 +538,10 @@ short player1bet = 5;
     
     NSLog( @"SHUFFLING" );
     
-    for ( short d = 1; d <= kNumberOfDecks; d++ )
+    NSUserDefaults *data = [NSUserDefaults standardUserDefaults];
+    short numberOfDecks = [[data objectForKey:@"numDecks"] boolValue];
+    
+    for ( short d = 1; d <= numberOfDecks; d++ )
         for ( short suit = 1; suit <= 4; suit++ )
             for ( short card = 1; card <= 13; card++ )
     {
@@ -478,9 +550,9 @@ short player1bet = 5;
     }
     
     for ( short i = 0; i < 3; i++ )
-        for ( short j = 0; j < 52 * kNumberOfDecks; j++ )
+        for ( short j = 0; j < 52 * numberOfDecks; j++ )
         {
-            r = arc4random()%(52 * kNumberOfDecks);
+            r = arc4random()%(52 * numberOfDecks);
             temp = deck[ r ];
             tempSuit = decksuits[ r ];
             deck[ r ] = deck[ j ];
@@ -513,6 +585,4 @@ short player1bet = 5;
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)betButton:(id)sender {
-}
 @end

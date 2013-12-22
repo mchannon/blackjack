@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "blaxjackGameViewController.h"
 
 @interface blaxjackAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic) blaxjackGameViewController *bgvc;
 
 @end
