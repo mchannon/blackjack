@@ -50,6 +50,11 @@ BOOL dealerHitsSoft17 = false;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    NSUserDefaults *data = [NSUserDefaults standardUserDefaults];
+    if ( [data objectForKey:@"player1balance"] )
+        player1balance = [[data objectForKey:@"player1balance"] integerValue];
+    
     [ self Shuffle ];
 	// Do any additional setup after loading the view.
 }
@@ -243,6 +248,11 @@ BOOL dealerHitsSoft17 = false;
     
     [self drawPlayer1Playfield: [ self AddPlayerCards:activesplit] split:activesplit ];
 
+    if (player1hand[ 0 ][activesplit] == player1hand[ 1 ][activesplit])
+        _splitButton.hidden = false;
+    else
+        _splitButton.hidden = true;
+
     [ _splitLabel setText:[NSString stringWithFormat:@"%d:", activesplit+1] ];
     _splitLabel.hidden = false;
 }
@@ -399,18 +409,29 @@ BOOL dealerHitsSoft17 = false;
     
     if ( surrender != true )
     {
-        if ( [ self AddPlayerCards:0 ] > 21)
-            player1balance -= doubledown[ 0 ] ? (2 * player1bet) : player1bet;
-        else
-            if ( [ self AddDealerCards ] > 21)
-                player1balance += doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+  //      short i = 0;
+//        if ( 1 )
+            
+       for ( short i = 0; i <= numberofsplits; i++ )
+        {
+            if ( [ self AddPlayerCards:i ] > 21)
+                player1balance -= doubledown[ i ] ? (2 * player1bet) : player1bet;
             else
-                if ( [ self AddDealerCards ] > [ self AddPlayerCards:0 ])
-                    player1balance -= doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+                if ( [ self AddDealerCards ] > 21)
+                    player1balance += doubledown[ i ] ? (2 * player1bet) : player1bet;
                 else
-                    if ( [ self AddDealerCards ] < [ self AddPlayerCards:0 ])
-                        player1balance += doubledown[ 0 ] ? (2 * player1bet) : player1bet;
+                    if ( [ self AddDealerCards ] > [ self AddPlayerCards:i ])
+                        player1balance -= doubledown[ i ] ? (2 * player1bet) : player1bet;
+                    else
+                        if ( [ self AddDealerCards ] < [ self AddPlayerCards:i ])
+                            player1balance += doubledown[ i ] ? (2 * player1bet) : player1bet;
+        }
     }
+    
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [ prefs setFloat:(float)player1balance forKey:@"player1balance"];
+    [ prefs synchronize];
+
 }
 
 - (void)seekInsurance

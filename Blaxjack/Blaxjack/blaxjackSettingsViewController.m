@@ -20,6 +20,43 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
+    NSUserDefaults *data = [NSUserDefaults standardUserDefaults];
+    if ( [data objectForKey:@"hitSoft17"] )
+        if ( [[data objectForKey:@"hitSoft17"] integerValue] == 1 )
+            _hitSoft17.on = true;
+    
+    if ( [data objectForKey:@"hitSoft17"] )
+        switch ( [[data objectForKey:@"numDecks"] integerValue] )
+    {
+        case 1:
+            _numberOfDecks.selectedSegmentIndex = 0;
+            break;
+            
+        case 2:
+            _numberOfDecks.selectedSegmentIndex = 1;
+            break;
+
+        case 3:
+            _numberOfDecks.selectedSegmentIndex = 2;
+            break;
+
+        case 4:
+            _numberOfDecks.selectedSegmentIndex = 3;
+            break;
+
+        case 6:
+            _numberOfDecks.selectedSegmentIndex = 4;
+            break;
+
+        case 8:
+            _numberOfDecks.selectedSegmentIndex = 5;
+            break;
+
+    }
+
+    
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
